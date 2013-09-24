@@ -24,6 +24,13 @@ However, if you've got the need for spee^H^H^H^Hembedded media -- and you think
 you're disciplined enough to not start writing all your CSS and JS as strings
 in your .py files -- then django-embedded-media makes it possible.
 
+Installation
+============
+
+Use `pip`_, obviously::
+
+    $ pip install django-embedded-media
+
 Usage
 =====
 
@@ -101,6 +108,7 @@ listed in requirements.txt::
 .. _Derek Payton: http://dmpayton.com/
 .. _MIT: https://github.com/dmpayton/django-embedded-media/blob/master/LICENSE
 .. _#13978: https://code.djangoproject.com/ticket/13978
+.. _pip: http://www.pip-installer.org/
 .. _Django: https://crate.io/packages/Django/
 .. _coverage: https://crate.io/packages/coverage/
 .. _pep8: https://crate.io/packages/pep8/
