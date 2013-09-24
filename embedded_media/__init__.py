@@ -7,8 +7,7 @@ __license__ = 'MIT License'
 try:
     import django
 except ImportError:
+    # Django not importable, we're probably pip installing
     pass
-    #we are pip installing
 else:
     from .media import CSS, JS
-
