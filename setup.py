@@ -26,7 +26,7 @@ setup(
     maintainer='Derek Payton',
     maintainer_email='derek.payton@gmail.com',
     url='https://github.com/dmpayton/django-embedded-media',
-    # download_url='https://github.com/dmpayton/django-embedded-media/tarball/v%s' % emb.__version__,
+    download_url='https://github.com/dmpayton/django-embedded-media/tarball/v%s' % emb.__version__,
     license=emb.__license__,
     include_package_data=True,
     packages=find_packages(exclude=('tests',)),

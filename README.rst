@@ -6,7 +6,7 @@ django-embedded-media
     :target: https://travis-ci.org/dmpayton/django-embedded-media
 
 :Author: `Derek Payton`_
-:Version: 0.0.1
+:Version: 0.1.0
 :License: `MIT`_
 
 Ever run into a situation where it would just be *so incredibly handy* to be
