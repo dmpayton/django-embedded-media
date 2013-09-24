@@ -10,19 +10,19 @@ django-embedded-media
 :License: `MIT`_
 
 Ever run into a situation where it would just be *so incredibly handy* to be
-able to put inline CSS or JS in your form to be rendered directly on the page?
+able to render inline CSS or JS in your Django form media?
 
 This lets you do that.
 
 It all started with ticket `#13978`_, which I championed for a while. However,
 I no longer think this is a good feature to have in Django. After using the
 `#13978`_ patch for a while, I've come to realize that it's just too damn easy
-to rely on it too much. No one wants a two-dozen line string of jQueryfied
-JS in the middle of their form class.
+to rely on it too much. No one wants to see a two-dozen line string of
+jQueryfied JS in the middle of their Django form class.
 
 However, if you've got the need for spee^H^H^H^Hembedded media -- and you think
 you're disciplined enough to not start writing all your CSS and JS as strings
-in your .py files -- then django-embedded-media makes it easier.
+in your .py files -- then django-embedded-media makes it possible.
 
 Usage
 =====
