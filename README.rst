@@ -31,7 +31,9 @@ There's no special configuration needed. It's a Django app, technically, but
 you don't need to put it into INSTALLED_APPS. Just install the package and
 start embedding your styles and scripts.
 
-Works on forms::
+Works on forms:
+
+.. code:: python
 
     >>> from django import forms
     >>> import embedded_media as emb
@@ -46,7 +48,9 @@ Works on forms::
     <script type="text/javascript">init_mywidget();</script>
     >>>
 
-Works on form widgets::
+Works on form widgets:
+
+.. code:: python
 
     >>> from django import forms
     >>> import embedded_media as emb
@@ -65,7 +69,9 @@ Works on form widgets::
     <script type="text/javascript">init_mywidget();</script>
     >>>
 
-Works as a dynamic media property::
+Works as a dynamic media property:
+
+.. code:: python
 
     >>> from django import forms
     >>> import embedded_media as emb
