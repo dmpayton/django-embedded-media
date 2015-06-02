@@ -21,7 +21,7 @@ class EmbeddedMedia(object):
         )
 
     def build_attrs(self):
-        attrs = [(k, conditional_escape(v)) for k, v in self.attrs.iteritems()]
+        attrs = [(k, conditional_escape(v)) for k, v in self.attrs.items()]
         attrs = ' '.join(['{0}="{1}"'.format(*x) for x in attrs])
         return attrs
 
