@@ -33,7 +33,7 @@ setup(
     test_suite='tests.setuptest.SetupTestSuite',
     tests_require=(
         'coverage',
-        'django>=1.4',
+        'django>=1.8',
         'pep8',
       ),
     zip_safe=False,

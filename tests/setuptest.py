@@ -1,10 +1,14 @@
 import pep8
 import sys
 import unittest
+import os
 
 from coverage import coverage, misc
 from distutils import log
-from StringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 
 class SetupTestSuite(unittest.TestSuite):
@@ -17,62 +21,21 @@ class SetupTestSuite(unittest.TestSuite):
         self.configure()
         self.cov = coverage()
         self.cov.start()
-        self.packages = self.resolve_packages()
 
-        super(SetupTestSuite, self).__init__(tests=self.build_tests(), \
-                *args, **kwargs)
+        super(SetupTestSuite, self).__init__(*args, **kwargs)
 
-        # Setup testrunner.
-        from django.test.simple import DjangoTestSuiteRunner
-        self.test_runner = DjangoTestSuiteRunner(
-            verbosity=1,
-            interactive=True,
-            failfast=False
-        )
-        self.test_runner.setup_test_environment()
-        self.old_config = self.test_runner.setup_databases()
-
-    def build_tests(self):
-        """
-        Build tests for inclusion in suite from resolved packages.
-        """
-        from django.core.exceptions import ImproperlyConfigured
-        from django.db.models import get_app
-        from django.test.simple import build_suite
-
-        tests = []
-        for package in self.packages:
-            try:
-                app_name = package.rsplit('.')[-1]
-                app = get_app(app_name, emptyOK=True)
-                tests.append(build_suite(app))
-            except ImproperlyConfigured, e:
-                raise
-                log.info("Warning: %s" % e)
-            except ImportError, e:
-                raise
-                log.info("Warning: %s" % e)
-        return tests
+        from django.conf import settings
+        from django.test.utils import get_runner
+        self.test_runner = get_runner(settings)()
 
     def configure(self):
         """
         Configures Django settings.
         """
-        from django.conf import settings
-        from django.utils.importlib import import_module
-        try:
-            test_settings = import_module('tests.test_settings')
-        except ImportError, e:
-            log.info('ImportError: Unable to import test settings: %s' % e)
-            sys.exit(1)
+        import django
 
-        setting_attrs = {}
-        for attr in dir(test_settings):
-            if '__' not in attr:
-                setting_attrs[attr] = getattr(test_settings, attr)
-
-        if not settings.configured:
-            settings.configure(**setting_attrs)
+        os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'
+        django.setup()
 
     def coverage_report(self):
         """
@@ -83,50 +46,12 @@ class SetupTestSuite(unittest.TestSuite):
         if verbose:
             log.info("\nCoverage Report:")
             try:
-                include = ['%s*' % package for package in self.packages]
+                include = ['embedded_media/*']
                 omit = ['*tests*']
                 self.cov.report(include=include, omit=omit)
                 self.cov.xml_report(include=include, omit=omit)
-            except misc.CoverageException, e:
+            except misc.CoverageException as e:
                 log.info("Coverage Exception: %s" % e)
-
-    def resolve_packages(self):
-        from django.conf import settings
-
-        packages = list()
-        targets = self.get_target_packages()
-
-        for app in settings.INSTALLED_APPS:
-            for target in targets:
-                if app.startswith(target):
-                    packages.append(app)
-        return packages
-
-    def get_target_packages(self):
-        """
-        Frame hack to determine packages contained in module for testing.
-        We ignore submodules (those containing '.')
-        """
-        f = sys._getframe()
-        while f:
-            if 'self' in f.f_locals:
-                locals_self = f.f_locals['self']
-                py_modules = getattr(locals_self, 'py_modules', None)
-                packages = getattr(locals_self, 'packages', None)
-
-                top_packages = []
-                if py_modules or packages:
-                    if py_modules:
-                        for module in py_modules:
-                            if '.' not in module:
-                                top_packages.append(module)
-                    if packages:
-                        for package in packages:
-                            if '.' not in package:
-                                top_packages.append(package)
-
-                    return list(set(top_packages))
-            f = f.f_back
 
     def pep8_report(self):
         """
@@ -140,7 +65,8 @@ class SetupTestSuite(unittest.TestSuite):
 
             # Run Pep8 checks.
             pep8_style = pep8.StyleGuide(ignore=['E2', 'E3', 'E4', 'E501', 'W'])
-            pep8_style.check_files([pkg.replace('.', '/') for pkg in self.packages])
+            pep8_style.check_files(['embedded_media/media.py',
+                                    'embedded_media/models.py'])
 
             # Restore stdout.
             sys.stdout = old_stdout
@@ -160,9 +86,7 @@ class SetupTestSuite(unittest.TestSuite):
         """
         Run the test, teardown the environment and generate reports.
         """
-        result = super(SetupTestSuite, self).run(*args, **kwargs)
-        self.test_runner.teardown_databases(self.old_config)
-        self.test_runner.teardown_test_environment()
+        failures = self.test_runner.run_tests(["embedded_media"])
         self.coverage_report()
         self.pep8_report()
-        return result
+        return failures
